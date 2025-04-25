@@ -1,0 +1,281 @@
+<% title = 'Home' %>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <h4>Welcome <%= email %></h4>
+    <h3 class="col-12 text-center mb-4">Movies List</h3>
+  </div>
+  <!-- Popup Alert Modal  -->
+  <div
+    class="modal fade"
+    id="popupAlertModal"
+    tabindex="-1"
+    aria-labelledby="popupAlertModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="popupAlertModalLabel">Movie Status</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <p id="popupAlertMessage">Movie updated successfully!</p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Movie Button -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <a href="/movies/add_movie" class="btn btn-outline-success w-100">
+        Add Movie
+      </a>
+    </div>
+  </div>
+
+  <!-- Search Bar and Sorting Buttons -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-12 col-md-6 col-lg-5">
+      <div class="d-flex flex-column flex-md-row">
+        <!-- Search Bar -->
+        <input
+          type="text"
+          id="movieSearch"
+          class="form-control mb-2 mb-md-0 me-md-2"
+          placeholder="Search for a movie..."
+          oninput="filterMovies()"
+        />
+      </div>
+      <div class="d-flex flex-column flex-md-row">
+        <!-- Sorting Buttons -->
+        <div class="btn-group w-100" role="group">
+          <button class="btn btn-outline-secondary" onclick="sortMoviesAsc()">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-sort-alpha-down"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z"
+              />
+              <path
+                d="M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z"
+              />
+            </svg>
+          </button>
+          <button class="btn btn-outline-secondary" onclick="sortMoviesDesc()">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-sort-alpha-down-alt"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M12.96 7H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645z"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M10.082 12.629 9.664 14H8.598l1.789-5.332h1.234L13.402 14h-1.12l-.419-1.371zm1.57-.785L11 9.688h-.047l-.652 2.156z"
+              />
+              <path
+                d="M4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z"
+              />
+            </svg>
+          </button>
+          <button class="btn btn-outline-secondary" onclick="clearSearch()">
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Movies Table -->
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-9">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover" id="moviesTable">
+          <thead>
+            <tr>
+              <th>Availability</th>
+              <th>Title</th>
+              <th></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="moviesTableBody">
+            <% for (const obj of movies) { %>
+            <!-- Load all movies -->
+            <tr class="movie-item">
+              <td>
+                <div class="form-check form-switch form-check-lg">
+                  <input class="form-check-input <%= obj.canSee ? 'bg-success' :
+                  'bg-danger' %>" type="checkbox" id="availability-<%= obj._id
+                  %>" <%= obj.canSee ? 'checked' : '' %>
+                  onchange="toggleAvailability('<%= obj._id %>', this.checked)">
+                </div>
+              </td>
+              <td class="movie-title"><%= obj.name %></td>
+              <td>
+                <a
+                  href="/movies/edit_movies/<%- obj._id %>"
+                  class="btn btn-light btn-outline-dark"
+                  type="button"
+                  >Edit</a
+                >
+              </td>
+              <td>
+                <a
+                  href="/movies/view_movies/<%= obj._id %>"
+                  class="btn btn-light btn-outline-dark"
+                  type="button"
+                  >View</a
+                >
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const originalMovies = <%- JSON.stringify(movies) %>; // Movies fetched from DB
+  let displayedMovies = []; // Movies that are displayed on the page
+
+  // Function to render movies
+  function renderMovies(movies) {
+    const tbody = document.getElementById("moviesTableBody");
+    // Clear existing content before re-rendering
+    tbody.innerHTML = "";
+
+    movies.forEach((movie) => {
+      const row = document.createElement("tr");
+      row.classList.add("movie-item");
+      row.innerHTML = `
+        <td>
+          <div class="form-check form-switch form-check-lg">
+            <input class="form-check-input ${movie.canSee ? 'bg-success' : 'bg-danger'}"
+              type="checkbox" id="availability-${movie._id}"
+              ${movie.canSee ? 'checked' : ''} onchange="toggleAvailability('${movie._id}', this.checked)">
+          </div>
+        </td>
+        <td class="movie-title">${movie.name}</td>
+        <td>
+          <a href="/movies/edit_movies/${movie._id}" class="btn btn-light btn-outline-dark" type="button">Edit</a>
+        </td>
+        <td>
+          <a href="/movies/view_movies/${movie._id}" class="btn btn-light btn-outline-dark" type="button">View</a>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+  }
+
+  // Initial render of all movies (no pagination, no page size)
+  renderMovies(originalMovies);
+
+  // Function to handle search (filtering)
+  function filterMovies() {
+    const searchTerm = document.getElementById("movieSearch").value.toLowerCase();
+    const filteredMovies = originalMovies.filter(movie => movie.name.toLowerCase().includes(searchTerm));
+
+    // Render filtered movies without pagination
+    renderMovies(filteredMovies);
+  }
+
+  // Sorting functions
+  function sortMoviesAsc() {
+    const sortedMovies = [...originalMovies].sort((a, b) => a.name.localeCompare(b.name));
+    renderMovies(sortedMovies);
+  }
+
+  function sortMoviesDesc() {
+    const sortedMovies = [...originalMovies].sort((a, b) => b.name.localeCompare(a.name));
+    renderMovies(sortedMovies);
+  }
+
+  // Function to clear the search input and reset the movies
+  function clearSearch() {
+    document.getElementById("movieSearch").value = "";
+    renderMovies(originalMovies);
+  }
+
+  // Function to toggle movie availability (send to server)
+  function toggleAvailability(movieId, isAvailable) {
+    fetch("/toggle-availability", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        movieId: movieId,
+        isAvailable: isAvailable
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log(`Movie ${movieId} availability updated to: ${data.canSee}`);
+
+          // Update the checkbox status based on the response
+          const checkbox = document.getElementById(`availability-${movieId}`);
+          if (data.canSee) {
+            checkbox.checked = true;
+            checkbox.classList.remove("bg-danger");
+            checkbox.classList.add("bg-success");
+          } else {
+            checkbox.checked = false;
+            checkbox.classList.remove("bg-success");
+            checkbox.classList.add("bg-danger");
+          }
+
+          // Show success popup alert
+          showPopupAlert("Movie updated successfully!");
+        } else {
+          console.error("Error updating movie availability");
+          showPopupAlert("Error updating movie. Please try again.");
+        }
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        showPopupAlert("Error updating movie. Please try again.");
+      });
+  }
+
+  // Function to display the popup modal
+  function showPopupAlert(message) {
+    const popupAlertMessage = document.getElementById("popupAlertMessage");
+
+    // Set the message in the modal
+    popupAlertMessage.textContent = message;
+
+    // Show the modal using Bootstrap's Modal API
+    const popupAlertModal = new bootstrap.Modal(document.getElementById('popupAlertModal'));
+    popupAlertModal.show();
+  }
+</script>

@@ -1,0 +1,87 @@
+<% title = 'Edit' %> <% if (error) { %>
+<div style="color: red">
+  <p>Error(s):</p>
+  <ul>
+    <% Object.values(error).forEach(err => { %>
+    <li><%= err.message %></li>
+    <% }); %>
+  </ul>
+</div>
+<% } %>
+
+<h3>Edit Movie</h3>
+<div class="row">
+  <!-- For extra small screens, the columns will span full width -->
+  <div class="col-12 col-sm-3"></div>
+  <div class="col-12 col-sm-6">
+    <form
+      action="/movies/edit_movies/<%= movie._id %>"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      <!-- Movie Name -->
+      <div class="mb-3">
+        <input
+          class="form-control form-control-lg"
+          type="text"
+          name="name"
+          value="<%= movie.name || '' %>"
+          placeholder="Enter movie name"
+          aria-label=".form-control-lg example"
+        />
+      </div>
+
+      <!-- Movie Description -->
+      <div class="mb-3">
+        <textarea class="mt-3 form-control form-control-sm" name="description">
+          <%= movie.description || '' %>
+        </textarea>
+      </div>
+
+      <!-- Thumbnail (Image) -->
+      <div class="mb-3">
+        <label for="formFileThumbnail" class="form-label">Thumbnail</label>
+        <input
+          class="form-control"
+          type="file"
+          id="formFileThumbnail"
+          name="image"
+        />
+        <small class="text-muted">
+          Current Thumbnail: <%= movie.imagePath || 'No thumbnail uploaded' %>
+        </small>
+      </div>
+
+      <!-- Movie File -->
+      <div class="mb-3">
+        <label for="formFileMovie" class="form-label">Movie File</label>
+        <input
+          class="form-control"
+          type="file"
+          id="formFileMovie"
+          name="video"
+        />
+        <small class="text-muted">
+          Current Movie: <%= movie.videoPath || 'No movie file uploaded' %>
+        </small>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="mb-3 d-flex flex-column flex-sm-row justify-content-evenly">
+        <button class="btn btn-outline-success mb-2 mb-sm-0">Update</button>
+        <a href="/" class="btn btn-outline-danger">Cancel</a>
+      </div>
+    </form>
+  </div>
+  <div class="col-12 col-sm-3"></div>
+</div>
+
+<% if (message === "success") { %>
+<script>
+  // Success alert
+  alert("Movie updated successfully!");
+  setTimeout(function () {
+    window.location.href = "/";
+  });
+</script>
+<% } %>

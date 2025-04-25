@@ -1,0 +1,48 @@
+<% title = 'Login' %>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-sm-12 col-md-8 col-lg-6">
+      <h1 class="text-center mb-4">Login</h1>
+      <form action="/login" method="post">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="text"
+            id="email"
+            class="form-control"
+            name="email"
+            placeholder="Enter your email"
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            name="password"
+            placeholder="Enter your password"
+          />
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+      </form>
+
+      <!-- Display validation errors -->
+      <% if (errors && errors.length > 0) { %>
+      <div class="alert alert-danger mt-3" role="alert">
+        <ul>
+          <% errors.forEach(function(error) { %>
+          <li><%= error.msg %></li>
+          <% }); %>
+        </ul>
+      </div>
+      <% } %>
+
+      <!-- Display messages -->
+      <% if (message) { %>
+      <div class="alert alert-danger mt-3" role="alert"><%= message %></div>
+      <% } %>
+    </div>
+  </div>
+</div>

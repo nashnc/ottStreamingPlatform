@@ -1,0 +1,40 @@
+<% title = 'View Movie' %>
+
+<h1><%= movie.name %></h1>
+
+<!-- Responsive layout adjustments -->
+<div class="container">
+  <div class="row">
+    <!-- Image column -->
+    <div class="col-12 col-sm-6 col-md-6 col-lg-6">
+      <img
+        src="/images/<%= movie.imagePath %>"
+        alt="Movie Image"
+        class="img-fluid border gb white"
+        style="object-fit: cover; height: 200px; width: 100%"
+      />
+    </div>
+
+    <!-- Video column -->
+    <div class="col-12 col-sm-6 col-md-6 col-lg-6">
+      <video
+        class="img-fluid border"
+        controls
+        width="100%"
+        style="height: 200px; object-fit: cover"
+      >
+        <source src="/videos/<%= movie.videoPath %>" type="video/mp4" />
+        Your browser does not support HTML video.
+      </video>
+    </div>
+  </div>
+
+  <!-- Description section -->
+  <div class="row">
+    <div class="col-12">
+      <div class="border p-3">
+        <p><%= movie.description %></p>
+      </div>
+    </div>
+  </div>
+</div>

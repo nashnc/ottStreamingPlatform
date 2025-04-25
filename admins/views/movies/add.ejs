@@ -1,0 +1,167 @@
+<% title = 'Add' %>
+
+<h3 class="text-center">Add Movie</h3>
+<div class="container">
+  <div class="row">
+    <!-- Empty column for spacing on larger screens, adjusts on smaller screens -->
+    <div class="col-12 col-sm-3"></div>
+
+    <div class="col-12 col-sm-6 col-md-6 col-lg-6">
+      <form action="add_movie" method="post" enctype="multipart/form-data">
+        <!-- Search box in a single row (col-12) -->
+        <div class="mb-3">
+          <input
+            class="form-control form-control-lg"
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Title"
+            aria-label=".form-control-lg example"
+          />
+        </div>
+
+        <!-- Description Textarea -->
+        <div class="mb-3">
+          <textarea
+            class="form-control form-control-sm"
+            placeholder="Description"
+            name="description"
+            id="description"
+            rows="3"
+          ></textarea>
+        </div>
+
+        <!-- Thumbnail Image Upload (Original Input) -->
+        <div class="mb-3">
+          <label for="formFileThumbnail" class="form-label">Thumbnail</label>
+          <input
+            class="form-control"
+            type="file"
+            name="image"
+            id="image"
+            accept="image/png, image/jpeg, image/jpg"
+          />
+        </div>
+
+        <!-- Drag-and-Drop for Thumbnail Image -->
+        <div class="mb-3">
+          <label for="formFileThumbnail" class="form-label">Or Drag and Drop Thumbnail</label>
+          <div
+            class="drop-zone rounded border border-primary p-3 text-center"
+            id="image-drop-zone"
+            style="cursor: pointer;"
+          >
+            <p>Drag and drop an image here or click to select an image.</p>
+          </div>
+        </div>
+
+        <!-- Movie Video Upload (Original Input) -->
+        <div class="mb-3">
+          <label for="formFileVideo" class="form-label">Video</label>
+          <input
+            class="form-control"
+            type="file"
+            name="video"
+            id="video"
+            accept="video/mp4, video/avi"
+          />
+        </div>
+
+        <!-- Drag-and-Drop for Video -->
+        <div class="mb-3">
+          <label for="formFileVideo" class="form-label">Or Drag and Drop Video</label>
+          <div
+            class="drop-zone rounded border border-primary p-3 text-center"
+            id="video-drop-zone"
+            style="cursor: pointer;"
+          >
+            <p>Drag and drop a video here or click to select a video.</p>
+          </div>
+        </div>
+
+        <!-- Button Layout Adjustment: Buttons below the form on smaller screens -->
+        <div class="mb-3 d-flex flex-column flex-md-row justify-content-evenly">
+          <input
+            type="submit"
+            class="btn btn-outline-success mb-2 mb-md-0"
+            value="Add"
+          />
+          <a href="/" class="btn btn-outline-danger">Cancel</a>
+        </div>
+      </form>
+
+      <% if (message === "success") { %>
+      <script>
+        // Show success alert for success message
+        alert("Movie added successfully!");
+
+        // Redirect after 2 seconds
+        setTimeout(function () {
+          window.location.href = "/";
+        });
+      </script>
+      <% } else { %>
+      <!-- Display error message inside HTML (inside body) -->
+      <% if (message) { %>
+      <div class="alert alert-danger" role="alert"><%= message %></div>
+      <% } %> <% } %>
+    </div>
+
+    <!-- Empty column for spacing on larger screens, adjusts on smaller screens -->
+    <div class="col-12 col-sm-3"></div>
+  </div>
+</div>
+
+<script>
+  // Add drag-and-drop functionality for image and video uploads
+  const imageDropZone = document.getElementById('image-drop-zone');
+  const videoDropZone = document.getElementById('video-drop-zone');
+  const imageInput = document.getElementById('image');
+  const videoInput = document.getElementById('video');
+
+  // Handle drag over event
+  function handleDragOver(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    event.dataTransfer.dropEffect = 'copy';
+  }
+
+  // Handle drag leave event
+  function handleDragLeave(event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  // Handle drop event for image
+  imageDropZone.addEventListener('dragover', handleDragOver);
+  imageDropZone.addEventListener('dragleave', handleDragLeave);
+  imageDropZone.addEventListener('drop', function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const files = event.dataTransfer.files;
+    if (files.length > 0 && files[0].type.startsWith("image")) {
+      imageInput.files = files;
+    }
+  });
+
+  // Handle drop event for video
+  videoDropZone.addEventListener('dragover', handleDragOver);
+  videoDropZone.addEventListener('dragleave', handleDragLeave);
+  videoDropZone.addEventListener('drop', function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const files = event.dataTransfer.files;
+    if (files.length > 0 && files[0].type.startsWith("video")) {
+      videoInput.files = files;
+    }
+  });
+
+  // Allow users to click the drop zone to select files
+  imageDropZone.addEventListener('click', function() {
+    imageInput.click();
+  });
+
+  videoDropZone.addEventListener('click', function() {
+    videoInput.click();
+  });
+</script>

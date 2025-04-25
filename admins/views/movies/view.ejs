@@ -1,0 +1,34 @@
+<% title = 'Top Movies' %>
+
+<h1>Top Movies</h1>
+
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <div class="row-sm">
+      <div class="col-sm-6"></div>
+      <div class="col-sm-6">
+        <thead>
+          <tr>
+            <th class="text-center">Title</th>
+            <th class="text-center">Views</th>
+          </tr>
+        </thead>
+      </div>
+      
+      <tbody>
+        <% for (const obj of movies) { %>
+          <div class="-sm-6"></div>
+          
+          <tr>
+            <td class="text-center"><%= obj.movieName %></td>
+            <td class="text-center"><%= obj.totalWatched %></td>
+          </tr>
+        </div>
+        
+      </div>
+      <% } %>
+      <div class="col-sm-6"></div>
+    </tbody>
+  </div>
+  </table>
+</div>

@@ -1,0 +1,257 @@
+<% title = 'Users List' %>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <h3 class="col-12 text-center mb-4">Users List</h3>
+  </div>
+  <!-- Popup Alert Modal  -->
+  <div
+    class="modal fade"
+    id="popupAlertModal"
+    tabindex="-1"
+    aria-labelledby="popupAlertModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="popupAlertModalLabel">User Status</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <p id="popupAlertMessage">User updated successfully!</p>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Bar and Sorting Buttons -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-12 col-md-6 col-lg-5">
+      <div class="d-flex flex-column flex-md-row">
+        <!-- Search Bar -->
+        <input
+          type="text"
+          id="userSearch"
+          class="form-control mb-2 mb-md-0 me-md-2"
+          placeholder="Search for a user..."
+          oninput="filterUsers()"
+        />
+      </div>
+      <div class="d-flex flex-column flex-md-row">
+        <!-- Sorting Buttons -->
+        <div class="btn-group w-100" role="group">
+          <button class="btn btn-outline-secondary" onclick="sortUsersAsc()">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-sort-alpha-down"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371zm1.57-.785L11 2.687h-.047l-.652 2.157z"
+              />
+              <path
+                d="M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z"
+              />
+            </svg>
+          </button>
+          <button class="btn btn-outline-secondary" onclick="sortUsersDesc()">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-sort-alpha-down-alt"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M12.96 7H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645z"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M10.082 12.629 9.664 14H8.598l1.789-5.332h1.234L13.402 14h-1.12l-.419-1.371zm1.57-.785L11 9.688h-.047l-.652 2.156z"
+              />
+              <path
+                d="M4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293z"
+              />
+            </svg>
+          </button>
+          <button class="btn btn-outline-secondary" onclick="clearSearch()">
+            Clear
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User List Table -->
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-10">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Block</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody">
+            <!-- Initially populated with users -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    const originalUsers = <%- JSON.stringify(users) %>;
+    let currentUsersCount = 5; // Start with 5 users
+
+    // Render users list
+    function renderUsers(users) {
+      const tbody = document.getElementById("userTableBody");
+      tbody.innerHTML = ""; // Clear current rows
+      users.forEach((user) => {
+        const row = document.createElement("tr");
+        row.classList.add("user-item");
+        row.innerHTML = `
+          <td>
+            <div class="form-check form-switch form-check-lg">
+              <input class="form-check-input ${user.isBlocked ? 'bg-danger' : 'bg-success'}"
+                     type="checkbox" id="block-${user._id}"
+                     ${user.isBlocked ? 'checked' : ''} onchange="toggleBlock('${user._id}', this.checked)">
+            </div>
+          </td>
+          <td class="user-name">${user.name}</td>
+          <td class="user-email">${user.email}</td>
+          <td>
+            <a href="/users/view/${user._id}" class="btn btn-light btn-outline-dark">View</a>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Load more users when scrolling to the bottom
+    function loadMoreUsers() {
+      if (currentUsersCount < originalUsers.length) {
+        const nextBatch = originalUsers.slice(currentUsersCount, currentUsersCount + 5); // Load next 5 users
+        renderUsers(nextBatch);
+        currentUsersCount += 5;
+      }
+    }
+
+    // Detect when the user reaches the bottom of the page
+    window.onscroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight) {
+        loadMoreUsers(); // Load more users when user scrolls to the bottom
+      }
+    };
+
+    // Filter users dynamically based on search input
+    function filterUsers() {
+      const searchTerm = document.getElementById("userSearch").value.toLowerCase();
+      const filteredUsers = originalUsers.filter(user =>
+        user.name.toLowerCase().includes(searchTerm) ||
+        user.email.toLowerCase().includes(searchTerm)
+      );
+      renderUsers(filteredUsers);
+    }
+
+    // Sort users by name in ascending order
+    function sortUsersAsc() {
+      const sortedUsers = [...originalUsers].sort((a, b) => a.name.localeCompare(b.name));
+      renderUsers(sortedUsers);
+    }
+
+    // Sort users by name in descending order
+    function sortUsersDesc() {
+      const sortedUsers = [...originalUsers].sort((a, b) => b.name.localeCompare(a.name));
+      renderUsers(sortedUsers);
+    }
+
+    // Clear the search input field and reset the user list to original state
+    function clearSearch() {
+      document.getElementById("userSearch").value = "";
+      renderUsers(originalUsers); // Reset to original users list
+    }
+
+    // Function to toggle block/unblock status of a user
+  function toggleBlock(userId, isChecked) {
+    fetch("/users/toggle-block", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, isBlocked: isChecked })
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        const checkbox = document.getElementById(`block-${userId}`);
+        checkbox.classList.toggle("bg-success", !data.isBlocked);
+        checkbox.classList.toggle("bg-danger", data.isBlocked);
+        checkbox.checked = data.isBlocked;
+
+        // Show success message in the modal
+        showPopupAlert("User block status updated successfully!");
+      } else {
+        showPopupAlert("Failed to update: " + data.message);
+        // Revert checkbox state in case of failure
+        document.getElementById(`block-${userId}`).checked = !isChecked;
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      showPopupAlert("Error updating block status");
+      // Revert checkbox state in case of error
+      document.getElementById(`block-${userId}`).checked = !isChecked;
+    });
+  }
+
+  // Function to display the popup modal
+  function showPopupAlert(message) {
+    const popupAlertMessage = document.getElementById("popupAlertMessage");
+
+    // Set the message in the modal
+    popupAlertMessage.textContent = message;
+
+    // Show the modal using Bootstrap's Modal API
+    const popupAlertModal = new bootstrap.Modal(document.getElementById('popupAlertModal'));
+    popupAlertModal.show();
+
+    // Auto-hide the modal after 3 seconds (optional)
+    setTimeout(() => {
+      popupAlertModal.hide();
+    }, 3000);
+  }
+
+
+    // Initially render the first batch of users
+    renderUsers(originalUsers.slice(0, 5)); // Load first 5 users
+</script>
+
+<style>
+  .form-control {
+    width: 100%;
+  }
+</style>

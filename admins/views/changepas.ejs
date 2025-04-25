@@ -1,0 +1,57 @@
+<% title = 'Change Password' %>
+
+<h2 class="mb-4 text-center">Update Password</h2>
+<div class="row justify-content-center">
+  <div class="col-12 col-md-6 col-lg-4">
+    <form action="/admpassc" method="post">
+      <div class="mb-3">
+        <label class="form-label">Current Password</label>
+        <input
+          type="password"
+          name="current_password"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">New Password</label>
+        <input
+          type="password"
+          name="new_password"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Confirm New Password</label>
+        <input
+          type="password"
+          name="confirm_new_password"
+          class="form-control"
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">
+        Update Password
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Display messages or errors -->
+<% if (message) { %>
+<div class="alert alert-info mt-3">
+  <p><%= message %></p>
+</div>
+<% } %> <% if (errors && errors.length > 0) { %>
+<div class="alert alert-danger mt-3">
+  <ul>
+    <% errors.forEach(function(error) { %>
+    <li><%= error.msg %></li>
+    <% }); %>
+  </ul>
+</div>
+<% } %>
